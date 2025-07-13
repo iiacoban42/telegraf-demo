@@ -1,0 +1,65 @@
+services:
+  influxdb:
+    image: influxdb:2.7
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+
+  influx-cli:
+    image: influxdb:2.7
+    depends_on:
+      - influxdb
+    command: sh -c 'sleep 5; influx setup
+     --bucket "${INFLUX_BUCKET:-telegraf}"
+     --token "${INFLUXDB_V2_TOKEN:-admin}"
+     --org "${INFLUXDB_V2_ORG:-telegraf}"
+     --username=${INFLUX_USERNAME:-"admin"}
+     --password=${INFLUX_PASSWORD:-"admin"}
+     --host=http://influxdb:8086
+     --force'
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: telegraf
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 80:80
+    depends_on:
+      - "postgres"
+
+
+  telegraf-sender:
+    image: telegraf:1.28
+    volumes:
+      - ./telegraf-sender.conf:/etc/telegraf/telegraf.conf:ro
+      - ./input.json:/input/input.json
+    depends_on:
+      - telegraf-receiver
+
+  telegraf-receiver:
+    image: telegraf:1.28
+    volumes:
+      - ./telegraf-receiver.conf:/etc/telegraf/telegraf.conf:ro
+    ports:
+      - 8080:8080
+    depends_on:
+      - influxdb
+
+
+volumes:
+  influxdb-data:
+  postgres_data:

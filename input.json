@@ -1,0 +1,30 @@
+[
+  {
+    "name": "downlink",
+    "tags": {
+      "sat": "sat-1"
+    },
+    "fields": {
+      "id": 1,
+      "datarate": 1199,
+      "rssi": -120.139840,
+      "frequency": 436651.744981,
+      "packet": "PACKET_1"
+    },
+    "time": "2025-01-14T10:21:43.580Z"
+  },
+  {
+      "name": "downlink",
+      "tags": {
+        "sat": "sat-1"
+      },
+      "fields": {
+        "id": 2,
+        "datarate": 1200,
+        "rssi": -116.951554,
+        "frequency": 436651.744981,
+        "packet": "PACKET_2"
+      },
+      "time": "2025-01-14T10:22:57.166Z"
+    }
+]
